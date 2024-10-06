@@ -23,12 +23,20 @@ func main() {
 	if err != nil {
 		exit("Failed to parse the provided CSV file")
 	}
-	fmt.Println(lines)
+
+	problems := parseLines(lines)
+	fmt.Println(problems)
 }
 
 func parseLines(lines [][]string) []problem {
 	result := make([]problem, len(lines))
 
+	for i, line := range lines {
+		result[i] = problem{
+			question: line[0],
+			answer:   line[1],
+		}
+	}
 	return result
 }
 

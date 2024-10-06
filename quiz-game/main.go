@@ -25,7 +25,20 @@ func main() {
 	}
 
 	problems := parseLines(lines)
-	fmt.Println(problems)
+
+	count := 0
+
+	for i, problem := range problems {
+		fmt.Printf("Problem #%d: %s = \n", i+1, problem.question)
+		var answer string
+		fmt.Scanf("%s\n", &answer)
+
+		if answer == problem.answer {
+			count++
+		}
+	}
+
+	fmt.Printf("You Scored %d/%d\n", count, len(problems))
 }
 
 func parseLines(lines [][]string) []problem {

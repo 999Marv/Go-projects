@@ -31,17 +31,23 @@ func main() {
 	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
 	count := 0
-	for i, problem := range problems {
-		select {
-		case <-timer.C:
-			fmt.Printf("You Scored %d/%d\n", count, len(problems))
-			return
-		default:
-			fmt.Printf("Problem #%d: %s = ", i+1, problem.question)
 
+problemloop:
+	for i, problem := range problems {
+		fmt.Printf("Problem #%d: %s = ", i+1, problem.question)
+		answerCh := make(chan string)
+
+		go func() {
 			var answer string
 			fmt.Scanf("%s\n", &answer)
+			answerCh <- answer
+		}()
 
+		select {
+		case <-timer.C:
+			fmt.Printf("\nYou Scored %d/%d\n", count, len(problems))
+			break problemloop
+		case answer := <-answerCh:
 			if answer == problem.answer {
 				count++
 			}

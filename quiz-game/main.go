@@ -5,10 +5,13 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 )
 
 func main() {
 	csvFilename := flag.String("csv", "problems.csv", "a csv file in the format of 'question,answer'")
+
+	timeLimit := flag.Int("limit", 30, "the time limit for the quiz in seconds")
 
 	flag.Parse()
 
@@ -25,16 +28,23 @@ func main() {
 	}
 
 	problems := parseLines(lines)
+	timer := time.NewTimer(time.Duration(*timeLimit) * time.Second)
 
 	count := 0
-
 	for i, problem := range problems {
-		fmt.Printf("Problem #%d: %s = \n", i+1, problem.question)
-		var answer string
-		fmt.Scanf("%s\n", &answer)
+		select {
+		case <-timer.C:
+			fmt.Printf("You Scored %d/%d\n", count, len(problems))
+			return
+		default:
+			fmt.Printf("Problem #%d: %s = ", i+1, problem.question)
 
-		if answer == problem.answer {
-			count++
+			var answer string
+			fmt.Scanf("%s\n", &answer)
+
+			if answer == problem.answer {
+				count++
+			}
 		}
 	}
 
